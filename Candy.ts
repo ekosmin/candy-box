@@ -8,6 +8,8 @@ module Main {
         level: Level;
         pieces: number;
 
+        slotted: boolean = false;
+
         constructor(level: Level, x: number, y: number, pieces: number){
             super(level.game, x, y, Candy.pickSprite(pieces));
             this.level = level;
@@ -15,15 +17,25 @@ module Main {
 
             this.inputEnabled = true;
             this.input.enableDrag(false, true);
+            this.events.onInputDown.add(this.pickup, this);
             this.events.onInputUp.add(this.release, this);
         }
 
-        private release(): void {
+        private pickup(): void {
+            if (!this.slotted) {
+                this.level.game.world.add(new Candy(this.level, this.x, this.y, this.pieces));
+            }
+        }
+
+        protected release(): void {
             var anchorSpace: Space = this.level.box.findAnchorSpace(this);
             if (anchorSpace != null) {
                 var globalPoint = anchorSpace.getBounds();
                 this.x = globalPoint.x;
                 this.y = globalPoint.y;
+                this.slotted = true;
+            } else {
+                this.destroy();
             }
         }
 
