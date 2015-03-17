@@ -18,7 +18,8 @@ module Main {
             this.box = new Box(this);
             levelGroup.add(this.box);
 
-            levelGroup.add(new Candy(this, 400, 100));
+            levelGroup.add(new Candy(this, 400, 100, 1));
+            levelGroup.add(new Candy(this, 400, 200, 5));
         }
 
     }
