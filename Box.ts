@@ -6,8 +6,8 @@ module Main {
     export class Box extends Phaser.Group {
 
         // A 2D array of spaces in the box. The upper left corner is (0,0) and goes to
-        // (COLUMNS, ROWS) in the lower right
-        spaces: Space[][] = [];
+        // (COLUMNS - 1, ROWS - 1) in the lower right
+        private spaces: Space[][] = [];
 
         private static ROWS: number = 6;
         private static COLUMNS: number = 10;
@@ -24,6 +24,17 @@ module Main {
                 }
                 this.addMultiple(this.spaces[column]);
             }
+        }
+
+        public findAnchorSpace(candy: Candy): Space {
+            for (var column: number = 0; column < Box.COLUMNS; column++) {
+                for (var row: number = 0; row < Box.ROWS; row++) {
+                    if (candy.overlap(this.spaces[column][row])) {
+                        return this.spaces[column][row];
+                    }
+                }
+            }
+            return null;
         }
     }
 }
