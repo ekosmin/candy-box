@@ -7,6 +7,7 @@ module Main {
 
         background: Phaser.Sprite;
         box: Box;
+        candies: Phaser.Group;
 
         create() {
             this.background = this.add.sprite(0, 0, 'level1');
@@ -18,8 +19,9 @@ module Main {
             this.box = new Box(this);
             levelGroup.add(this.box);
 
-            levelGroup.add(new Candy(this, 400, 100, 1));
-            levelGroup.add(new Candy(this, 400, 200, 5));
+            this.candies = this.game.add.group();
+            this.candies.add(new Candy(this, 400, 100, 1));
+            this.candies.add(new Candy(this, 400, 200, 5));
         }
 
     }

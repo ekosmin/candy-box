@@ -10,6 +10,13 @@ module Main {
 
         slotted: boolean = false;
 
+        private static SIZE = 32; // size of a candy (including border)
+        private static BORDER_SIZE = 2;
+        private static HITBOX_SIZE = 4;
+
+        private static BORDERED_SIZE = Candy.SIZE - Candy.BORDER_SIZE; // Adjacent candies share a border
+        private static HITBOX_OFFSET = (Candy.SIZE - Candy.HITBOX_SIZE)/2; // Places hitbox in the candy center
+
         constructor(level: Level, x: number, y: number, pieces: number){
             super(level.game, x, y, Candy.pickSprite(pieces));
             this.level = level;
@@ -19,18 +26,25 @@ module Main {
             this.input.enableDrag(false, true);
             this.events.onInputDown.add(this.pickup, this);
             this.events.onInputUp.add(this.release, this);
+
+            this.level.game.physics.enable(this, Phaser.Physics.ARCADE);
+
+            // The hitbox should extend through the center of each candy
+            var hitboxWidth: number = Candy.HITBOX_SIZE + Candy.BORDERED_SIZE * (pieces - 1);
+            this.body.setSize(hitboxWidth, Candy.HITBOX_SIZE, Candy.HITBOX_OFFSET, Candy.HITBOX_OFFSET);
         }
 
         private pickup(): void {
             if (!this.slotted) {
-                this.level.game.world.add(new Candy(this.level, this.x, this.y, this.pieces));
+                this.level.candies.add(new Candy(this.level, this.x, this.y, this.pieces));
             }
+            this.slotted = false;
         }
 
         protected release(): void {
             var anchorSpace: Space = this.level.box.findAnchorSpace(this);
             if (anchorSpace != null) {
-                var globalPoint = anchorSpace.getBounds();
+                var globalPoint:PIXI.Rectangle = anchorSpace.getBounds();
                 this.x = globalPoint.x;
                 this.y = globalPoint.y;
                 this.slotted = true;
